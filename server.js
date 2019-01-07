@@ -2,6 +2,7 @@
 
 /* 
 mongoimport --db doublejump --collection reviews --drop --file ./primer-review-dataset.json
+mongoimport --db doublejump --collection products --drop --file ./primer-product-dataset.json
 */
 
 require('dotenv').config();
@@ -12,6 +13,7 @@ const mongoose = require('mongoose');
 const { PORT, CLIENT_ORIGIN, DATABASE_URL } = require('./config');
 const passport = require('passport');
 const reviewRouter = require('./routes/reviews');
+const productRouter = require('./routes/products');
 const { router: usersRouter } = require('./users');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 mongoose.Promise = global.Promise;
@@ -49,6 +51,7 @@ app.use('/users/', usersRouter);
 app.use('/auth/', authRouter);
 const jwtAuth = passport.authenticate('jwt', { session: false });
 app.use('/reviews', reviewRouter);
+app.use('/products', productRouter);
 
 if (require.main === module) {
   // Connect to DB and Listen for incoming connections

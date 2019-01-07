@@ -5,13 +5,14 @@ const mongoose = require('mongoose');
 const schema = new mongoose.Schema({
   name: { type: String, required: true },
   genre: { type: String, required: true },
-  description: { type: String },
-  imgUrl: {type: String, required: true}
+  description: { type: String, required: true },
+  imgUrl: {type: String, required: true},
+  price: {type: String, required: true}
 });
 
 // Add `createdAt` and `updatedAt` fields
 schema.set('timestamps', true);
-schema.index({name:1,genre:1,description:1, imgUrl: 1 }, {unique:true});
+schema.index({name:1}, {unique:true});
 // Transform output during `res.json(data)`, `console.log(data)` etc.
 schema.set('toJSON', {
   virtuals: true,
@@ -21,4 +22,4 @@ schema.set('toJSON', {
   }
 });
 
-module.exports = mongoose.model('Review', schema);
+module.exports = mongoose.model('Product', schema);
