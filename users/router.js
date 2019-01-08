@@ -1,13 +1,14 @@
 'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const passport = require('passport');
 const {User} = require('./models');
-
 const router = express.Router();
-
 const jsonParser = bodyParser.json();
+const { ExtractJwt } = require('passport-jwt');
 
+
+const jwtAuth = passport.authenticate('jwt', { session: false });
 // Post to register a new user
 router.post('/', jsonParser, (req, res) => {
   const requiredFields = ['username', 'password'];
@@ -91,8 +92,8 @@ router.post('/', jsonParser, (req, res) => {
       location: tooSmallField || tooLargeField
     });
   }
-
-  let {username, password, firstName = '', lastName = ''} = req.body;
+  const cart = [];
+  let {username, password, firstName, lastName} = req.body;
   // Username and password come in pre-trimmed, otherwise we throw an error
   // before this
   firstName = firstName.trim();
@@ -118,7 +119,8 @@ router.post('/', jsonParser, (req, res) => {
         username,
         password: hash,
         firstName,
-        lastName
+        lastName,
+        cart
       });
     })
     .then(user => {
@@ -138,6 +140,35 @@ router.post('/', jsonParser, (req, res) => {
 // we're just doing this so we have a quick way to see
 // if we're creating users. keep in mind, you can also
 // verify this in the Mongo shell.
+
+router.put('/cart',jwtAuth, (req, res, next) => {
+  console.log(req.user);
+  const {cart} = req.body;
+  return  User.findOneAndUpdate({_id: req.user.id} , {cart}, { new: true })
+      .then(result => {
+        if (result) {
+          res.json(result);
+        } else {
+          console.log('HERE');
+          next();
+        }
+      })
+      .catch(err => {
+        if (err.code === 11000) {
+          err = new Error('Could not update cart');
+          err.status = 400;
+        }
+        next(err);
+      });
+});
+
+router.get('/cart',jwtAuth, (req, res, next) => {
+  
+  return User.findOne({_id: req.user.id})
+    .then(user => res.json(user.serialize()))
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+})
+
 router.get('/', (req, res) => {
   return User.find()
     .then(users => res.json(users.map(user => user.serialize())))
@@ -145,3 +176,43 @@ router.get('/', (req, res) => {
 });
 
 module.exports = {router};
+
+
+
+
+// router.put('/:id', (req, res, next) => {
+//   const { id } = req.params;
+//   const { name, description, genre, imgUrl, comment } = req.body;
+//   // const userId = req.user.id;
+//   // Checking for improper input from the user
+//   // Check for bad ids
+//   if (!mongoose.Types.ObjectId.isValid(id)) {
+//     const err = new Error('The `id` is not valid');
+//     err.status = 400;
+//     return next(err);
+//   }
+
+//   if (!name) {
+//     const err = new Error('Missing `name` in request body');
+//     err.status = 400;
+//     return next(err);
+//   }
+
+//   const updateReview = { name, description , genre , imgUrl, price};
+
+//   Product.findOneAndUpdate({_id: id} , updateReview, { new: true })
+//     .then(result => {
+//       if (result) {
+//         res.json(result);
+//       } else {
+//         next();
+//       }
+//     })
+//     .catch(err => {
+//       if (err.code === 11000) {
+//         err = new Error('Folder name already exists');
+//         err.status = 400;
+//       }
+//       next(err);
+//     });
+// });
