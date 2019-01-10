@@ -3,6 +3,7 @@
 /* 
 mongoimport --db doublejump --collection reviews --drop --file ./primer-review-dataset.json
 mongoimport --db doublejump --collection products --drop --file ./primer-product-dataset.json
+mongoimport --db doublejump --collection orders --drop --file ./primer-order-dataset.json
 https://www.smashbros.com/assets_v2/img/fighter/pict/dark_samus.png
 https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/intermediary/f/07fefc4d-56e8-4bb7-b7d9-c4a3b3603c0e/d8mkurg-38ea549c-4237-41eb-9f65-a400696438aa.png
 https://pm1.narvii.com/6521/3a7f8e2599fa8c86e698617d4a689c75d2972d79_hq.jpg
@@ -17,6 +18,7 @@ const { PORT, CLIENT_ORIGIN, DATABASE_URL } = require('./config');
 const passport = require('passport');
 const reviewRouter = require('./routes/reviews');
 const productRouter = require('./routes/products');
+const orderRouter = require('./routes/orders');
 const { router: usersRouter } = require('./users');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
 mongoose.Promise = global.Promise;
@@ -53,6 +55,7 @@ passport.use(jwtStrategy);
 app.use('/users/', usersRouter);
 app.use('/auth/', authRouter);
 const jwtAuth = passport.authenticate('jwt', { session: false });
+app.use('/orders',jwtAuth, orderRouter);
 app.use('/reviews', reviewRouter);
 app.use('/products', productRouter);
 
