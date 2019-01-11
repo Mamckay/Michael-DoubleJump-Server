@@ -7,9 +7,9 @@ mongoimport --db doublejump --collection products --drop --file ./primer-product
 mongoimport --db doublejump --collection orders --drop --file ./primer-order-dataset.json
 
 LIVE
-mongoimport -h ds153824.mlab.com:53824 -d double-jump -c reviews -u mamckay -p 123abc123 --file ./primer-review-dataset.json
-mongoimport -h ds153824.mlab.com:53824 -d double-jump -c products -u mamckay -p 123abc123 --file ./primer-product-dataset.json
-mongoimport -h ds153824.mlab.com:53824 -d double-jump -c orders -u mamckay -p 123abc123 --file ./primer-order-dataset.json
+mongoimport -h ds153824.mlab.com:53824 -d double-jump -c reviews -u mamckay -p 123abc123 --drop --file ./primer-review-dataset.json
+mongoimport -h ds153824.mlab.com:53824 -d double-jump -c products -u mamckay -p 123abc123 --drop --file ./primer-product-dataset.json
+mongoimport -h ds153824.mlab.com:53824 -d double-jump -c orders -u mamckay -p 123abc123 --drop --file ./primer-order-dataset.json
 
 https://www.smashbros.com/assets_v2/img/fighter/pict/dark_samus.png
 https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/intermediary/f/07fefc4d-56e8-4bb7-b7d9-c4a3b3603c0e/d8mkurg-38ea549c-4237-41eb-9f65-a400696438aa.png

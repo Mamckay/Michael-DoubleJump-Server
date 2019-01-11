@@ -6,7 +6,8 @@ const schema = new mongoose.Schema({
   name: { type: String, required: true },
   genre: { type: String, required: true },
   description: { type: String },
-  imgUrl: {type: String, required: true}
+  imgUrl: {type: String, required: true},
+  reviewbody: {type:String, required:true}
 });
 
 // Add `createdAt` and `updatedAt` fields
