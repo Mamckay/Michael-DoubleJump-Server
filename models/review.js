@@ -10,7 +10,7 @@ const schema = new mongoose.Schema({
   imgUrl: {type: String, required: true},
   imgTag: {type: String, required: true},
   author: {type: String, required: true},
-  reviewbody: {type:String, required:true},
+  reviewbody: {type:String, required:true}
 });
 
 // Add `createdAt` and `updatedAt` fields
