@@ -55,7 +55,7 @@ router.post('/', (req, res, next) => {
     // determine the price based on the order
     const price = items.length * 60;
     const completed = false;
-    const shipdate = new Date();
+    const shipdate = new Date(2019,1,10);
     shipdate.setDate(shipdate.getDate() + 3);
     //create order object
     const newOrder = {address, userId, items, price, completed, shipdate};
