@@ -11,7 +11,7 @@ const { ExtractJwt } = require('passport-jwt');
 const jwtAuth = passport.authenticate('jwt', { session: false });
 // Post to register a new user
 router.post('/', jsonParser, (req, res) => {
-  const requiredFields = ['username', 'password'];
+  const requiredFields = ['username', 'password','address'];
   const missingField = requiredFields.find(field => !(field in req.body));
 
   if (missingField) {
@@ -23,7 +23,7 @@ router.post('/', jsonParser, (req, res) => {
     });
   }
 
-  const stringFields = ['username', 'password', 'firstName', 'lastName'];
+  const stringFields = ['username', 'password', 'firstName', 'lastName','address'];
   const nonStringField = stringFields.find(
     field => field in req.body && typeof req.body[field] !== 'string'
   );
@@ -93,7 +93,7 @@ router.post('/', jsonParser, (req, res) => {
     });
   }
   const cart = [];
-  let {username, password, firstName, lastName} = req.body;
+  let {username, password, firstName, lastName, address} = req.body;
   // Username and password come in pre-trimmed, otherwise we throw an error
   // before this
   firstName = firstName.trim();
@@ -120,7 +120,8 @@ router.post('/', jsonParser, (req, res) => {
         password: hash,
         firstName,
         lastName,
-        cart
+        cart,
+        address
       });
     })
     .then(user => {
@@ -149,7 +150,26 @@ router.put('/cart',jwtAuth, (req, res, next) => {
         if (result) {
           res.json(result);
         } else {
-          console.log('HERE');
+          next();
+        }
+      })
+      .catch(err => {
+        if (err.code === 11000) {
+          err = new Error('Could not update cart');
+          err.status = 400;
+        }
+        next(err);
+      });
+});
+
+router.put('/address',jwtAuth, (req, res, next) => {
+  console.log(req.user);
+  const {address} = req.body;
+  return  User.findOneAndUpdate({_id: req.user.id} , {address}, { new: true })
+      .then(result => {
+        if (result) {
+          res.json(result);
+        } else {
           next();
         }
       })
@@ -172,6 +192,13 @@ router.get('/cart',jwtAuth, (req, res, next) => {
 router.get('/', (req, res) => {
   return User.find()
     .then(users => res.json(users.map(user => user.serialize())))
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
+
+router.delete('/',jwtAuth, (req, res) => {
+  const id = req.user.id
+  return User.findOneAndDelete({_id:id})
+    .then(users => res.json(users.serialize()))
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
