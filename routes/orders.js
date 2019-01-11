@@ -7,7 +7,8 @@ const Order = require('../models/orders');
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
-    Order.find({})
+    const id = req.user.id;
+    Order.find({userId: id})
       .then(results => {
         res.json(results);
       })
