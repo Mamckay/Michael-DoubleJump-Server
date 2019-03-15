@@ -45,7 +45,6 @@ app.use(
 );
 app.use(express.json());
 
-// Find what this actually does
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
@@ -62,7 +61,7 @@ passport.use(jwtStrategy);
 app.use('/users/', usersRouter);
 app.use('/auth/', authRouter);
 const jwtAuth = passport.authenticate('jwt', { session: false });
-app.use('/orders',jwtAuth, orderRouter);
+app.use('/orders', jwtAuth, orderRouter);
 app.use('/reviews', reviewRouter);
 app.use('/products', productRouter);
 
