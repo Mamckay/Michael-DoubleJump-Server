@@ -140,11 +140,6 @@ router.post("/", jsonParser, (req, res) => {
     });
 });
 
-// Never expose all your users like below in a prod application
-// we're just doing this so we have a quick way to see
-// if we're creating users. keep in mind, you can also
-// verify this in the Mongo shell.
-
 router.put("/cart", jwtAuth, (req, res, next) => {
   console.log(req.user);
   const { cart } = req.body;
@@ -191,11 +186,11 @@ router.get("/cart", jwtAuth, (req, res, next) => {
     .catch(err => res.status(500).json({ message: "Internal server error" }));
 });
 
-router.get("/", (req, res) => {
-  return User.find()
-    .then(users => res.json(users.map(user => user.serialize())))
-    .catch(err => res.status(500).json({ message: "Internal server error" }));
-});
+// router.get("/", (req, res) => {
+//   return User.find()
+//     .then(users => res.json(users.map(user => user.serialize())))
+//     .catch(err => res.status(500).json({ message: "Internal server error" }));
+// });
 
 router.delete("/", jwtAuth, (req, res) => {
   const id = req.user.id;
