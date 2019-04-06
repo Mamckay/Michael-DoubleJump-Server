@@ -2,27 +2,24 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-//const passport = require('passport');
 const Product = require('../models/product');
 const router = express.Router();
 
 router.get('/', (req, res, next) => {
-    console.log(req.body);
-    Product.find({})
-      .sort('name')
-      .then(results => {
-        res.json(results);
-      })
-      .catch(err => {
-        next(err);
-      });
-  });
-  
-  router.get('/:id', (req, res, next) => {
-    console.log(req.body);
-    const id = req.params.id;
+  Product.find({})
+    .sort('name')
+    .then(results => {
+      res.json(results);
+    })
+    .catch(err => {
+      next(err);
+    });
+});
 
-    Product.find({_id: id})
+router.get('/:id', (req, res, next) => {
+  const id = req.params.id;
+
+  Product.find({ _id: id })
     .sort('name')
     .then(results => {
       res.json(results);
@@ -34,10 +31,10 @@ router.get('/', (req, res, next) => {
 
 /* Delete Review */
 
-router.delete('/:id', (req,res,next) => {
-    const id = req.params.id;
+router.delete('/:id', (req, res, next) => {
+  const id = req.params.id;
 
-    Product.findOneAndRemove({_id: id})
+  Product.findOneAndRemove({ _id: id })
     .sort('name')
     .then(results => {
       res.json(results);
@@ -49,10 +46,8 @@ router.delete('/:id', (req,res,next) => {
 
 /* Post Review */
 router.post('/', (req, res, next) => {
-  console.log(req.body);
-  const { name, genre, description } = req.body;
-  console.log(name);
-  const newReview = { name, genre, description, imgUrl };
+  const { name, reviewId, genre, description, imgUrl, price } = req.body;
+  const newReview = { name, reviewId, genre, description, imgUrl, price };
 
   // Checking for improper input from the user
   // Check for bad ids
@@ -77,10 +72,8 @@ router.post('/', (req, res, next) => {
 
 router.put('/:id', (req, res, next) => {
   const { id } = req.params;
-  const { name, description, genre, imgUrl, comment } = req.body;
-  // const userId = req.user.id;
-  // Checking for improper input from the user
-  // Check for bad ids
+  const { name, reviewId, genre, description, imgUrl, price } = req.body;
+
   if (!mongoose.Types.ObjectId.isValid(id)) {
     const err = new Error('The `id` is not valid');
     err.status = 400;
@@ -93,9 +86,9 @@ router.put('/:id', (req, res, next) => {
     return next(err);
   }
 
-  const updateReview = { name, description , genre , imgUrl, price};
+  const updateReview = { name, reviewId, genre, description, imgUrl, price };
 
-  Product.findOneAndUpdate({_id: id} , updateReview, { new: true })
+  Product.findOneAndUpdate({ _id: id }, updateReview, { new: true })
     .then(result => {
       if (result) {
         res.json(result);

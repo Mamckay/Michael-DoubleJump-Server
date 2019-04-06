@@ -7,8 +7,6 @@ const Review = require('../models/review');
 const router = express.Router();
 
 //specify the authentication
-// gonna work on this later
-// router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
 /* ========== GET/READ ALL ITEMS ========== */
 router.get('/', (req, res, next) => {
   Review.find({})
@@ -23,9 +21,9 @@ router.get('/', (req, res, next) => {
 
 /* ========== GET/READ A SINGLE ITEM ========== */
 router.get('/:id', (req, res, next) => {
-    const id = req.params.id;
+  const id = req.params.id;
 
-    Review.find({_id: id})
+  Review.findOne({ _id: id })
     .sort('name')
     .then(results => {
       res.json(results);
@@ -35,30 +33,51 @@ router.get('/:id', (req, res, next) => {
     });
 });
 
-/* Delete Review */
-
-router.delete('/:id', (req,res,next) => {
-    const id = req.params.id;
-
-    Review.findOneAndRemove({_id: id})
-    .sort('name')
-    .then(results => {
-      res.json(results);
-    })
-    .catch(err => {
-      next(err);
-    });
-})
 
 /* Post Review */
 router.post('/', (req, res, next) => {
-  const { name, genre, description, imgUrl } = req.body;
-  const newReview = { name, genre, description, imgUrl };
+  const { name, rating, author, imgTag, genre, description, imgUrl, reviewbody } = req.body;
+  const newReview = { name, rating, author, imgTag, genre, description, imgUrl, reviewbody };
 
   // Checking for improper input from the user
   // Check for bad ids
   if (!name) {
     const err = new Error('Missing `name` in request body');
+    err.status = 400;
+    return next(err);
+  }
+  if (!rating) {
+    const err = new Error('Missing `rating` in request body');
+    err.status = 400;
+    return next(err);
+  }
+  if (!author) {
+    const err = new Error('Missing `author` in request body');
+    err.status = 400;
+    return next(err);
+  }
+  if (!imgTag) {
+    const err = new Error('Missing `imgTag` in request body');
+    err.status = 400;
+    return next(err);
+  }
+  if (!genre) {
+    const err = new Error('Missing `genre` in request body');
+    err.status = 400;
+    return next(err);
+  }
+  if (!description) {
+    const err = new Error('Missing `description` in request body');
+    err.status = 400;
+    return next(err);
+  }
+  if (!imgUrl) {
+    const err = new Error('Missing `imgUrl` in request body');
+    err.status = 400;
+    return next(err);
+  }
+  if (!reviewbody) {
+    const err = new Error('Missing `reviewbody` in request body');
     err.status = 400;
     return next(err);
   }
@@ -94,9 +113,9 @@ router.put('/:id', (req, res, next) => {
     return next(err);
   }
 
-  const updateReview = { name, description , genre , imgUrl};
+  const updateReview = { name, description, genre, imgUrl };
 
-  Review.findOneAndUpdate({_id: id} , updateReview, { new: true })
+  Review.findOneAndUpdate({ _id: id }, updateReview, { new: true })
     .then(result => {
       if (result) {
         res.json(result);
